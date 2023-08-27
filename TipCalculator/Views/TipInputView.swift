@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import Combine
+import CombineCocoa
+
 
 class TipInputView: UIView {
   private let headerView: HeaderView = {
@@ -40,16 +43,28 @@ class TipInputView: UIView {
   
   private lazy var tenPercentBtn: UIButton = {
     let btn = buildTipInputBttn(tip: Tip.tenPercent)
+    btn.tapPublisher.flatMap({
+      Just(Tip.tenPercent)
+    }).assign(to: \.value, on: tipSubject)
+      .store(in: &cancellables)
     return btn
   }()
   
   private lazy var twentyPercentBtn: UIButton = {
     let btn = buildTipInputBttn(tip: Tip.twentyPercent)
+    btn.tapPublisher.flatMap({
+      Just(Tip.twentyPercent)
+    }).assign(to: \.value, on: tipSubject)
+      .store(in: &cancellables)
     return btn
   }()
   
   private lazy var fiftyPercentBtn: UIButton = {
     let btn = buildTipInputBttn(tip: Tip.fiftyPercent)
+    btn.tapPublisher.flatMap({
+      Just(Tip.fiftyPercent)
+    }).assign(to: \.value, on: tipSubject)
+      .store(in: &cancellables)
     return btn
   }()
   
@@ -90,7 +105,14 @@ class TipInputView: UIView {
   }()
   
   
+  //MARK: tipSubject for input
+  private let tipSubject =  CurrentValueSubject<Tip, Never>(.none)
   
+  
+  //MARK: init cancellables
+  private var cancellables = Set<AnyCancellable>()
+  
+
   private func layout() {
     [headerView, vBtnStackView].forEach(addSubview(_:))
     vBtnStackView.snp.makeConstraints { make in
@@ -111,25 +133,23 @@ class TipInputView: UIView {
 }
 
 
-enum Tip {
-  case none
-  case tenPercent
-  case fiftyPercent
-  case twentyPercent
-  case custome(value: Int)
+//MARK: -  publisher declared here
+extension TipInputView {
   
-  var stringValue:String {
-    switch self {
-    case .none:
-      return ""
-    case .tenPercent:
-      return "10%"
-    case .fiftyPercent:
-      return "50%"
-    case .twentyPercent:
-      return "20%"
-    case .custome(let value):
-      return String(value)
+  
+  //MARK: valuePublisher
+  var valuePublisher: AnyPublisher<Tip, Never> {
+    return tipSubject.eraseToAnyPublisher()
+  }
+  
+  
+  final private func observe() {
+    tipSubject.sink {[unowned self] tip in
+      
     }
   }
+  
+  
+  
+  
 }

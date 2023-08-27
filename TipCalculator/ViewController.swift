@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import Combine
+
 
 class ViewController: UIViewController {
   
@@ -16,6 +18,8 @@ class ViewController: UIViewController {
   private let billInputView = BillInputView()
   private let tipInputView = TipInputView()
   private let sliptInputView = SplitInputView()
+  private let calculatorVm = CalculatorVm()
+  private var cancellables = Set<AnyCancellable>()
   
   private lazy var stackView: CustomStackView = {
     let stackView = CustomStackView(frame: .infinite, orientation: .vertical, spacing: 36, distribution: .fillProportionally)
@@ -27,6 +31,7 @@ class ViewController: UIViewController {
     super.viewDidLoad()
     // Do any additional setup after loading the view.
     layout()
+    bind()
     print("something")
   }
 
@@ -63,6 +68,19 @@ extension ViewController {
     sliptInputView.snp.makeConstraints { make in
       make.height.equalTo(56)
     }
+  }
+}
+
+
+//MARK: - view model binding
+extension ViewController {
+  final private func bind() {
+    let input = CalculatorVm.Input(billPublisher: billInputView.valuePublisher, tipPublisher: tipInputView.valuePublisher, splitPublisher: Just(100).eraseToAnyPublisher())
+    
+    let output = calculatorVm.transformInput(input: input)
+    output.updateViewPublisher.sink { result in
+      print("result >>>>", result)
+    }.store(in: &cancellables)
   }
 }
 

@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import Combine
+import CombineCocoa
 
 class BillInputView: UIView {
   
@@ -36,7 +38,7 @@ class BillInputView: UIView {
   private lazy var textField: UITextField = {
     let textField = CustomTextFieldView(borderStyle: .none, keyBoardType: .decimalPad, tintColour: ThemeColour.textColour, textColour: ThemeColour.textColour, font: ThemeFont.bold(size: 28))
     
-    let customToolBar = CustomKeyBoard(frame:  CGRect(x: 0, y: 0, width: frame.size.width, height: 36), sizeToFit: true, enableUserInteraction: true)
+    let customToolBar = CustomKeyBoard(frame:  CGRect(x: 0, y: 0, width: frame.size.width, height: 30), sizeToFit: true, enableUserInteraction: true)
     customToolBar.setBarstyle(barStyle: .default)
     
     let doneButton = UIBarButtonItem(
@@ -59,10 +61,16 @@ class BillInputView: UIView {
   }()
   
   
+  //MARK: PassthroughSubject == billSubject
+  private let billSubject: PassthroughSubject<Double, Never> = .init()
+  
+  //MARK: cancellables store
+  private var cancellables =  Set<AnyCancellable>()
   
   init() {
     super.init(frame: .zero)
     layout()
+    observe()
   }
   
   private func layout() {
@@ -95,6 +103,22 @@ class BillInputView: UIView {
   
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+  
+}
+
+
+//MARK: - value Publisher
+extension BillInputView {
+  var valuePublisher: AnyPublisher<Double, Never>{
+    return billSubject.eraseToAnyPublisher()
+  }
+  
+  //MARK: func observe == observe changes in text field
+  final private func observe() {
+    textField.textPublisher.sink { [unowned self] text in
+      billSubject.send(text?.doubleValue ?? 0)
+    }.store(in: &cancellables)
   }
   
 }

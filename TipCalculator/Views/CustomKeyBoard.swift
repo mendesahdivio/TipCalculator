@@ -32,23 +32,23 @@ class CustomKeyBoard: UIToolbar, CustomKeyBoardProtocol {
     fatalError("init(coder:) has not been implemented")
   }
   
-  func additems(items: [UIBarButtonItem]) {
+  final func additems(items: [UIBarButtonItem]) {
     toolBar.items = items
   }
   
-  func setBarstyle(barStyle: UIBarStyle) {
+  final func setBarstyle(barStyle: UIBarStyle) {
     toolBar.barStyle = barStyle
   }
   
-  func setSizeToFit() {
+  final func setSizeToFit() {
     toolBar.sizeToFit()
   }
   
-  func setEnableUserInteraction() {
+  final func setEnableUserInteraction() {
     toolBar.isUserInteractionEnabled = true
   }
   
-  func setEnableMultiTouch() {
+ final func setEnableMultiTouch() {
     toolBar.isMultipleTouchEnabled = true
   }
   
