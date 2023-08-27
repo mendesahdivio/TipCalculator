@@ -18,7 +18,8 @@ class ResultView: UIView {
   private let amountLabelView: UILabel = {
     let label = UILabel()
     label.textAlignment = .center
-    let text = NSMutableAttributedString(string: "$0", attributes: [.font: ThemeFont.bold(size: 40)])
+    label.textColor = ThemeColour.textColour
+    let text = NSMutableAttributedString(string: "$000", attributes: [.font: ThemeFont.bold(size: 40)])
     text.addAttributes([.font: ThemeFont.bold(size: 24)], range: NSMakeRange(0, 1))
     label.attributedText = text
     return label
