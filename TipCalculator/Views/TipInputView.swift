@@ -165,20 +165,28 @@ extension TipInputView {
     }()
     parentViewController?.present(alertController, animated: true)
   }
+  
+  //reset view on select of other btn
+  final private func resetView() {
+    [tenPercentBtn,
+     twentyPercentBtn,
+     fiftyPercentBtn,
+     customBtnView].forEach {
+      $0.backgroundColor = ThemeColour.primary
+    }
+    
+    let text = NSMutableAttributedString(
+      string: "Custom tip",
+      attributes: [.font: ThemeFont.bold(size: 20)])
+    customBtnView.setAttributedTitle(text, for: .normal)
+    
+  }
+  
+  
 }
 
 
-
-
-
-
-
-
-
-
 //MARK: -  publisher declared here ------------------------------------------------------------------------
-
-
 extension TipInputView {
   
   
@@ -188,11 +196,13 @@ extension TipInputView {
   }
   
   
+  //observe changes in the subject
   final private func observe() {
     tipSubject.sink {[unowned self] tip in
+      resetView()
       switch tip {
       case .none:
-        break;
+        break
       case .tenPercent:
         tenPercentBtn.backgroundColor = ThemeColour.secondary
       case .fiftyPercent:
@@ -200,9 +210,17 @@ extension TipInputView {
       case .twentyPercent:
         twentyPercentBtn.backgroundColor = ThemeColour.secondary
       case .custom(let value):
-        print("do something for the custom value",value)
+        customBtnView.backgroundColor = ThemeColour.secondary
+        let text = NSMutableAttributedString(
+          string: "$\(value)",
+          attributes: [
+            .font: ThemeFont.bold(size: 20)
+          ])
+        text.addAttributes([
+          .font: ThemeFont.bold(size: 14)
+        ], range: NSMakeRange(0, 1))
+        customBtnView.setAttributedTitle(text, for: .normal)
       }
     }.store(in: &cancellables)
   }
-  
 }
