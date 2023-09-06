@@ -20,6 +20,7 @@ class TipInputView: UIView {
   init() {
     super.init(frame: .zero)
     layout()
+    observe()
   }
   
   final private func buildTipInputBttn(tip: Tip)-> UIButton {
@@ -69,13 +70,16 @@ class TipInputView: UIView {
   }()
   
   
-  private let customBtnView: UIButton = {
+  private lazy var customBtnView: UIButton = {
     let btn = UIButton()
     btn.setTitle("Custom tip", for: .normal)
     btn.titleLabel?.font = ThemeFont.bold(size: 20)
     btn.backgroundColor = ThemeColour.primary
     btn.tintColor = UIColor.white
     btn.addCornerRadius(radius: 8.0)
+    btn.tapPublisher.sink { [weak self] _ in
+      self?.handleCustomTipBttn()
+    }.store(in: &cancellables)
     return btn
   }()
   
@@ -133,7 +137,48 @@ class TipInputView: UIView {
 }
 
 
-//MARK: -  publisher declared here
+//MARK: - func to preapre Alert view for custom button
+extension TipInputView {
+  final private func handleCustomTipBttn() {
+    let alertController: UIAlertController =  {
+      let controller = UIAlertController(
+      title: "Enter your custom Tip",
+      message: nil,
+      preferredStyle: .alert)
+      controller.addTextField { textField in
+        textField.placeholder = "Please make it generous!😋"
+        textField.keyboardType = .numberPad
+        textField.autocorrectionType = .no
+      }
+      let cancelAction = UIAlertAction(
+        title: "Cancel",
+        style: .cancel)
+      let okAction = UIAlertAction(
+        title: "Ok",
+        style: .default) { [weak self] _ in
+          guard let text = controller.textFields?.first?.text,
+                let value = Int(text) else { return }
+          self?.tipSubject.send(.custom(value: value))
+        }
+      [okAction, cancelAction].forEach(controller.addAction(_:))
+      return controller
+    }()
+    parentViewController?.present(alertController, animated: true)
+  }
+}
+
+
+
+
+
+
+
+
+
+
+//MARK: -  publisher declared here ------------------------------------------------------------------------
+
+
 extension TipInputView {
   
   
@@ -145,11 +190,19 @@ extension TipInputView {
   
   final private func observe() {
     tipSubject.sink {[unowned self] tip in
-      
-    }
+      switch tip {
+      case .none:
+        break;
+      case .tenPercent:
+        tenPercentBtn.backgroundColor = ThemeColour.secondary
+      case .fiftyPercent:
+        fiftyPercentBtn.backgroundColor = ThemeColour.secondary
+      case .twentyPercent:
+        twentyPercentBtn.backgroundColor = ThemeColour.secondary
+      case .custom(let value):
+        print("do something for the custom value",value)
+      }
+    }.store(in: &cancellables)
   }
-  
-  
-  
   
 }
