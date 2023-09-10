@@ -52,17 +52,27 @@ class AmountView: UIView {
     layout()
   }
   
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-}
-
-
-extension AmountView {
   final private func layout() {
     addSubview(stackView)
     stackView.snp.makeConstraints { make in
       make.edges.equalToSuperview()
     }
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+}
+
+//MARK: Configure view from result view
+extension AmountView {
+  func configure(amount: Double) {
+    let text = NSMutableAttributedString(
+      string: amount.currencyString,
+      attributes: [.font: ThemeFont.bold(size: 24)])
+    text.addAttributes(
+      [.font: ThemeFont.bold(size: 16)],
+      range: NSMakeRange(0, 1))
+    amountLabel.attributedText = text
   }
 }

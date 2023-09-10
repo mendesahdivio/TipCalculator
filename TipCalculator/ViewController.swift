@@ -11,6 +11,15 @@ import Combine
 
 
 class ViewController: UIViewController {
+  //Tap publisher
+  private lazy var viewTapPublisher: AnyPublisher<Void, Never> = {
+    let tapGesture = UITapGestureRecognizer(target: self, action: nil)
+    view.addGestureRecognizer(tapGesture)
+    return tapGesture.tapPublisher.flatMap {[unowned self] _ in
+      Just(())
+    }.eraseToAnyPublisher()
+  }()
+  
   
   //create views here
   private let logoView = LogoView()
@@ -32,7 +41,7 @@ class ViewController: UIViewController {
     // Do any additional setup after loading the view.
     layout()
     bind()
-    print("something")
+    observeTap()
   }
 
 }
@@ -75,12 +84,21 @@ extension ViewController {
 //MARK: - view model binding
 extension ViewController {
   final private func bind() {
-    let input = CalculatorVm.Input(billPublisher: billInputView.valuePublisher, tipPublisher: tipInputView.valuePublisher, splitPublisher: Just(100).eraseToAnyPublisher())
+    let input = CalculatorVm.Input(billPublisher: billInputView.valuePublisher, tipPublisher: tipInputView.valuePublisher, splitPublisher: sliptInputView.sliptPublisher)
     
     let output = calculatorVm.transformInput(input: input)
-    output.updateViewPublisher.sink { result in
-      print("result >>>>", result)
+    output.updateViewPublisher.sink {[unowned self] result in
+      resultView.configure(result: result)
     }.store(in: &cancellables)
   }
 }
 
+
+//MARK: Listen to view tap publisher
+extension ViewController {
+  private func observeTap() {
+    viewTapPublisher.sink { [unowned self] _ in
+      view.endEditing(true)
+    }.store(in: &cancellables)
+  }
+}

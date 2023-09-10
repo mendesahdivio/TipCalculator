@@ -6,8 +6,24 @@
 //
 
 import UIKit
+import Combine
+import CombineCocoa
 
 class SplitInputView: UIView {
+  //MARK: subject
+  private let splitSubject = CurrentValueSubject<Int, Never>(1);
+  
+  
+  
+  //MARK: valuePublisher
+  var sliptPublisher: AnyPublisher<Int, Never> {
+    return splitSubject.removeDuplicates().eraseToAnyPublisher()
+  }
+  
+  
+  //MARK: cancellables
+  private var cancelables = Set<AnyCancellable>()
+  
   
   private let headerLabelView: HeaderView = {
     let headerView = HeaderView()
@@ -20,6 +36,9 @@ class SplitInputView: UIView {
       text: "-",
       corners: [.layerMinXMaxYCorner,
       .layerMinXMinYCorner])
+    bttn.tapPublisher.flatMap { [unowned self] _ in
+      Just(splitSubject.value == 1 ? 1 : splitSubject.value - 1)
+    }.assign(to: \.value, on: splitSubject).store(in: &cancelables)
     return bttn
   }()
   
@@ -28,6 +47,9 @@ class SplitInputView: UIView {
       text: "+",
       corners: [.layerMaxXMinYCorner,
                 .layerMaxXMaxYCorner])
+    bttn.tapPublisher.flatMap { [unowned self] _ in
+      Just(splitSubject.value + 1)
+    }.assign(to: \.value, on: splitSubject).store(in: &cancelables)
     return bttn
   }()
   
@@ -53,6 +75,7 @@ class SplitInputView: UIView {
   init() {
     super.init(frame: .zero)
     layout()
+    observe()
   }
   
   private func layout() {
@@ -88,4 +111,15 @@ class SplitInputView: UIView {
     button.addRoundedCorners(corners: corners, radius: 8.0)
     return button
   }
+}
+
+
+extension SplitInputView {
+  
+  final private func observe() {
+    splitSubject.sink { [unowned self] quantity in
+      quantityLabelView.text = quantity.stringValue
+    }.store(in: &cancelables)
+  }
+  
 }

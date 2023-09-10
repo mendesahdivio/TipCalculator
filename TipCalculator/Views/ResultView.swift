@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import CombineCocoa
+import Combine
+
 
 class ResultView: UIView {
-  
   private let topLabelView: UILabel = {
     let label = LabelView.buildLabel(text: "Total p/person", font: ThemeFont.regular(size: 16), textAlignment: .center)
     return label
@@ -97,4 +99,16 @@ class ResultView: UIView {
     fatalError("init(coder:) has not been implemented")
   }
   
+}
+
+//MARK: Configure view from View model
+extension ResultView {
+  
+  func configure(result: Result) {
+    let text = NSMutableAttributedString(string: result.amountPerPerson.currencyString, attributes: [.font: ThemeFont.bold(size: 48)])
+    text.addAttributes([.font: ThemeFont.bold(size: 24)], range: NSMakeRange(0, 1))
+    amountLabelView.attributedText = text
+    totalTipView.configure(amount: result.amountPerPerson)
+    totalBillView.configure(amount: result.totalBill)
+  }
 }
