@@ -33,6 +33,8 @@
 		C0B03C7E2A8D40EA00D7E5DA /* LabelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B03C7D2A8D40EA00D7E5DA /* LabelFactory.swift */; };
 		C0B7BF4E2A8E2B5100C8990C /* AmountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B7BF4D2A8E2B5100C8990C /* AmountView.swift */; };
 		C0B7BF502A8E2DF900C8990C /* UIview+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B7BF4F2A8E2DF900C8990C /* UIview+Extensions.swift */; };
+		C0C497652AACE7560057EF29 /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C497642AACE7560057EF29 /* Int+Extension.swift */; };
+		C0C497672AAD83150057EF29 /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C497662AAD83150057EF29 /* Double+Extension.swift */; };
 		C0E4C6EB2A9BC7AD00A803CB /* CalculatorVm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E4C6EA2A9BC7AD00A803CB /* CalculatorVm.swift */; };
 		C0E4C6ED2A9BD72900A803CB /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E4C6EC2A9BD72900A803CB /* String+Extensions.swift */; };
 		C0E4C6F02A9BDEDE00A803CB /* Tip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E4C6EF2A9BDEDE00A803CB /* Tip.swift */; };
@@ -84,6 +86,8 @@
 		C0B03C7D2A8D40EA00D7E5DA /* LabelFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelFactory.swift; sourceTree = "<group>"; };
 		C0B7BF4D2A8E2B5100C8990C /* AmountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountView.swift; sourceTree = "<group>"; };
 		C0B7BF4F2A8E2DF900C8990C /* UIview+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIview+Extensions.swift"; sourceTree = "<group>"; };
+		C0C497642AACE7560057EF29 /* Int+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
+		C0C497662AAD83150057EF29 /* Double+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
 		C0E4C6EA2A9BC7AD00A803CB /* CalculatorVm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorVm.swift; sourceTree = "<group>"; };
 		C0E4C6EC2A9BD72900A803CB /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		C0E4C6EF2A9BDEDE00A803CB /* Tip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tip.swift; sourceTree = "<group>"; };
@@ -219,6 +223,8 @@
 				C0B7BF4F2A8E2DF900C8990C /* UIview+Extensions.swift */,
 				C0E4C6EC2A9BD72900A803CB /* String+Extensions.swift */,
 				C079829A2AA8EF8B00097F0A /* UIResponder+Extension.swift */,
+				C0C497642AACE7560057EF29 /* Int+Extension.swift */,
+				C0C497662AAD83150057EF29 /* Double+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -402,8 +408,10 @@
 				C0B03C772A8D353B00D7E5DA /* ThemeColour.swift in Sources */,
 				C0B03BB82A8C920000BEAAD2 /* CustomStackView.swift in Sources */,
 				C003EEDE2A8BCA3F00B64960 /* SceneDelegate.swift in Sources */,
+				C0C497652AACE7560057EF29 /* Int+Extension.swift in Sources */,
 				C0B03BB62A8C85E500BEAAD2 /* SplitInputView.swift in Sources */,
 				C0B03C7E2A8D40EA00D7E5DA /* LabelFactory.swift in Sources */,
+				C0C497672AAD83150057EF29 /* Double+Extension.swift in Sources */,
 				C0B03BB42A8C85BB00BEAAD2 /* TipInputView.swift in Sources */,
 				C0FC38DB2A90F29500310B03 /* HeaderView.swift in Sources */,
 				C0FC38DF2A90FF4F00310B03 /* CustomKeyBoard.swift in Sources */,
