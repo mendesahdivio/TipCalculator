@@ -6,31 +6,125 @@
 //
 
 import XCTest
+import Combine
 @testable import TipCalculator
 
 final class TipCalculatorTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+  
+  private var sut: CalculatorVm!
+  private var cancellables: Set<AnyCancellable>!
+  private var logoViewTapSubject: PassthroughSubject<Void, Never>!
+  private var audioPlayerService: MockAudioPlayerService!
+  
+  override func setUp() {
+    audioPlayerService = .init()
+    sut = .init(audioPlayerService: audioPlayerService)
+    cancellables = .init()
+    logoViewTapSubject = .init()
+    super.setUp()
+  }
+  
+  override func tearDown() {
+    super.tearDown()
+    sut = nil
+    cancellables = nil
+    logoViewTapSubject = nil
+  }
+  
+  //MARK: test without tip and one person
+  func testResultWithoutTipForOnePerson() {
+    //given
+    let bill = 100.0
+    let tip: Tip = .none
+    let split = 1
+    let input = billdInput(bill: bill, tip: tip, split: split)
+    
+    let output = sut.transformInput(input: input)
+    
+    output.updateViewPublisher.sink { result in
+      XCTAssertEqual(result.amountPerPerson, 100)
+      XCTAssertEqual(result.totalBill, 100)
+      XCTAssertEqual(result.totalTip, 0)
+    }.store(in: &cancellables)
+    
+  }
+  
+  //MARK: test without tip and 2 person
+  func testResultWithoutTipFor2Person() {
+    // given
+    let bill: Double = 100.0
+    let tip: Tip = .none
+    let split: Int = 2
+    let input = billdInput(
+      bill: bill,
+      tip: tip,
+      split: split)
+    // when
+    let output = sut.transformInput(input: input)
+    // then
+    output.updateViewPublisher.sink { result in
+      XCTAssertEqual(result.amountPerPerson, 50)
+      XCTAssertEqual(result.totalBill, 100)
+      XCTAssertEqual(result.totalTip, 0)
+    }.store(in: &cancellables)
+  }
+  
+  
+  //MARK: test with tip of 10 percent and two person
+  func testResultTipForTwoPerson() {
+    //given
+    let bill = 100.0
+    let tip: Tip = .tenPercent
+    let split = 2
+    let input = billdInput(bill: bill, tip: tip, split: split)
+    
+    let output = sut.transformInput(input: input)
+    
+    output.updateViewPublisher.sink { result in
+      XCTAssertEqual(result.amountPerPerson, 55)
+      XCTAssertEqual(result.totalBill, 110)
+      XCTAssertEqual(result.totalTip, 10)
+    }.store(in: &cancellables)
+    
+  }
+  
+  
+  //MARK: test audio service
+  func testAudioService() {
+    let input = billdInput(bill: 100.0, tip: .tenPercent, split: 2)
+    let outPut = sut.transformInput(input: input)
+    let expectation1 = XCTestExpectation(description: "reset calculator called")
+    let expectation2 = audioPlayerService.expectation
+    outPut.resetCalculatorPublisher.sink { _ in
+      expectation1.fulfill()
+    }.store(in: &cancellables)
+    logoViewTapSubject.send()
+    wait(for: [expectation1, expectation2], timeout: 1.0)
+  }
+  
 
 }
+
+//MARK: Audio service implementation
+class MockAudioPlayerService: AudioPlayerService {
+  var expectation = XCTestExpectation(description: "playSound is called")
+  func playAudio() {
+    expectation.fulfill()
+  }
+}
+
+
+//MARK: build Intput
+extension TipCalculatorTests {
+  final private func billdInput(bill: Double, tip: Tip, split: Int) -> CalculatorVm.Input {
+    return .init(
+      billPublisher: Just(bill).eraseToAnyPublisher(),
+      tipPublisher: Just(tip).eraseToAnyPublisher(),
+      splitPublisher: Just(split).eraseToAnyPublisher(),
+      logoViewTapPublisher: logoViewTapSubject.eraseToAnyPublisher())
+  }
+}
+
+
+
+

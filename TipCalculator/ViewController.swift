@@ -11,7 +11,7 @@ import Combine
 
 
 class ViewController: UIViewController {
-  //Tap publisher
+  //View Tap publisher
   private lazy var viewTapPublisher: AnyPublisher<Void, Never> = {
     let tapGesture = UITapGestureRecognizer(target: self, action: nil)
     view.addGestureRecognizer(tapGesture)
@@ -19,6 +19,17 @@ class ViewController: UIViewController {
       Just(())
     }.eraseToAnyPublisher()
   }()
+  
+  //logoView Tap publisher
+  private lazy var logoViewTapPublisher: AnyPublisher<Void, Never> = {
+    let tapGesture = UITapGestureRecognizer(target: self, action: nil)
+    tapGesture.numberOfTapsRequired = 2
+    logoView.addGestureRecognizer(tapGesture)
+    return tapGesture.tapPublisher.flatMap {[unowned self] _ in
+      Just(())
+    }.eraseToAnyPublisher()
+  }()
+  
   
   
   //create views here
@@ -84,11 +95,29 @@ extension ViewController {
 //MARK: - view model binding
 extension ViewController {
   final private func bind() {
-    let input = CalculatorVm.Input(billPublisher: billInputView.valuePublisher, tipPublisher: tipInputView.valuePublisher, splitPublisher: sliptInputView.sliptPublisher)
+    let input = CalculatorVm.Input(billPublisher: billInputView.valuePublisher, tipPublisher: tipInputView.valuePublisher, splitPublisher: sliptInputView.sliptPublisher, logoViewTapPublisher: logoViewTapPublisher)
     
     let output = calculatorVm.transformInput(input: input)
     output.updateViewPublisher.sink {[unowned self] result in
       resultView.configure(result: result)
+    }.store(in: &cancellables)
+    
+    output.resetCalculatorPublisher.sink { [unowned self] _ in
+      billInputView.reset()
+      tipInputView.reset()
+      sliptInputView.reset()
+      UIView.animate(
+        withDuration: 0.1,
+        delay: 0,
+        usingSpringWithDamping: 5.0,
+        initialSpringVelocity: 0.5,
+        options: .curveEaseInOut) {
+          self.logoView.transform = .init(scaleX: 1.5, y: 1.5)
+        } completion: { _ in
+          UIView.animate(withDuration: 0.1) {
+            self.logoView.transform = .identity
+          }
+        }
     }.store(in: &cancellables)
   }
 }

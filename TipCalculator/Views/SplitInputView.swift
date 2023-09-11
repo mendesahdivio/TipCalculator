@@ -122,4 +122,8 @@ extension SplitInputView {
     }.store(in: &cancelables)
   }
   
+  final func reset() {
+    splitSubject.send(1)
+  }
+  
 }

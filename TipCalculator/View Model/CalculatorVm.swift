@@ -14,23 +14,26 @@ class CalculatorVm {
     let billPublisher: AnyPublisher<Double, Never>
     let tipPublisher: AnyPublisher<Tip, Never>
     let splitPublisher: AnyPublisher<Int, Never>
-    //let logoViewTapPublisher: AnyPublisher<Void, Never>
+    let logoViewTapPublisher: AnyPublisher<Void, Never>
   }
+  
   struct Output {
     let updateViewPublisher: AnyPublisher<Result, Never>
+    let resetCalculatorPublisher: AnyPublisher<Void, Never>
   }
   
   private var cancellables = Set<AnyCancellable>()
+  private let audioPlayerService: AudioPlayerService
+  
+  init(audioPlayerService: AudioPlayerService = DefaultAudioPlayer()) {
+    self.audioPlayerService = audioPlayerService
+  }
 }
 
 
 //MARK: - transform func
 extension CalculatorVm {
   final  func transformInput(input: Input) -> Output{
-//    input.tipPublisher.sink { tip in
-//      print("tip tapped value >>>>", tip)
-//    }.store(in: &cancellables)
-    
     let updatePublishers = Publishers.CombineLatest3(input.billPublisher, input.tipPublisher, input.splitPublisher).flatMap {[unowned self] (bill, tip, split) in
       let totalTip = getTipAmount(bill: bill, tip: tip)
       let totalBill = bill + totalTip
@@ -41,7 +44,14 @@ extension CalculatorVm {
         totalTip: totalTip)
       return Just(result)
     }.eraseToAnyPublisher()
-    return Output(updateViewPublisher: updatePublishers)
+    
+    let resultCalculatorPublisher = input.logoViewTapPublisher.handleEvents(receiveOutput: { [unowned self] in
+      audioPlayerService.playAudio()
+    }).flatMap {
+      return Just($0)
+    }.eraseToAnyPublisher()
+    
+    return Output(updateViewPublisher: updatePublishers, resetCalculatorPublisher: resultCalculatorPublisher)
   }
   
   
