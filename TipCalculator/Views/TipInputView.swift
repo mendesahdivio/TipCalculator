@@ -223,4 +223,8 @@ extension TipInputView {
       }
     }.store(in: &cancellables)
   }
+  
+  func reset() {
+    tipSubject.send(.none)
+  }
 }

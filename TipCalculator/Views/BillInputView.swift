@@ -28,7 +28,7 @@ class BillInputView: UIView {
   
   
   private let currencyDenominationLabel: UILabel = {
-    let label = LabelView.buildLabel(text: "$", font: ThemeFont.bold(size: 24))
+    let label = LabelView.buildLabel(text: "\u{20B9}", font: ThemeFont.bold(size: 24))
     label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
     return label
   }()
@@ -127,5 +127,10 @@ extension BillInputView {
 extension BillInputView {
   @objc func doneButtonTapped() {
     textField.endEditing(true)
+  }
+  
+  func reset() {
+    textField.text = nil
+    billSubject.send(0)
   }
 }
