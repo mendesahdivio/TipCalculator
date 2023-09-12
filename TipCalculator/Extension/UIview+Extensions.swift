@@ -47,3 +47,22 @@ extension UIView: SpacerViewProtocol {
     return spacerView
   }
 }
+
+
+//MARK: For getting views to input custom values for testing
+//stack overflow ref::  https://stackoverflow.com/a/45297466/6181721
+extension UIView {
+  
+  func allSubViewsOf<T : UIView>(type : T.Type) -> [T] {
+    var all = [T]()
+    func getSubview(view: UIView) {
+      if let aView = view as? T{
+        all.append(aView)
+      }
+      guard view.subviews.count>0 else { return }
+      view.subviews.forEach{ getSubview(view: $0) }
+    }
+    getSubview(view: self)
+    return all
+  }
+}
