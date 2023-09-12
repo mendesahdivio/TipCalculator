@@ -33,7 +33,7 @@ final class TipCalculatorTests: XCTestCase {
   
   //MARK: test without tip and one person
   func testResultWithoutTipForOnePerson() {
-    //given
+    
     let bill = 100.0
     let tip: Tip = .none
     let split = 1
@@ -51,7 +51,7 @@ final class TipCalculatorTests: XCTestCase {
   
   //MARK: test without tip and 2 person
   func testResultWithoutTipFor2Person() {
-    // given
+    
     let bill: Double = 100.0
     let tip: Tip = .none
     let split: Int = 2
@@ -59,9 +59,9 @@ final class TipCalculatorTests: XCTestCase {
       bill: bill,
       tip: tip,
       split: split)
-    // when
+    
     let output = sut.transformInput(input: input)
-    // then
+    
     output.updateViewPublisher.sink { result in
       XCTAssertEqual(result.amountPerPerson, 50)
       XCTAssertEqual(result.totalBill, 100)
@@ -72,7 +72,7 @@ final class TipCalculatorTests: XCTestCase {
   
   //MARK: test with tip of 10 percent and two person
   func testResultTipForTwoPerson() {
-    //given
+    
     let bill = 100.0
     let tip: Tip = .tenPercent
     let split = 2
