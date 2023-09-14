@@ -212,7 +212,7 @@ extension TipInputView {
       case .custom(let value):
         customBtnView.backgroundColor = ThemeColour.secondary
         let text = NSMutableAttributedString(
-          string: "$\(value)",
+          string: "\u{20B9} \(value)",
           attributes: [
             .font: ThemeFont.bold(size: 20)
           ])

@@ -24,6 +24,7 @@ class ResultView: UIView {
     let text = NSMutableAttributedString(string: "\u{20B9} 0", attributes: [.font: ThemeFont.bold(size: 40)])
     text.addAttributes([.font: ThemeFont.bold(size: 24)], range: NSMakeRange(0, 1))
     label.attributedText = text
+    label.accessibilityIdentifier = ScreenIdentifiers.ResultView.totalAmountPerPersonValueLabel.rawValue
     return label
   }()
   
@@ -49,12 +50,12 @@ class ResultView: UIView {
   
   
   private let totalBillView: AmountView = {
-    let view = AmountView(textAlignment: .left, title: "Total bill")
+    let view = AmountView(textAlignment: .left, title: "Total bill", identifier: ScreenIdentifiers.ResultView.totalBillValueLabel.rawValue)
     return view
   }()
   
   private let totalTipView: AmountView = {
-    let view = AmountView(textAlignment: .right, title: "Total tip")
+    let view = AmountView(textAlignment: .right, title: "Total tip", identifier: ScreenIdentifiers.ResultView.totalTipValueLabel.rawValue)
     return view
   }()
   
@@ -108,7 +109,7 @@ extension ResultView {
     let text = NSMutableAttributedString(string: result.amountPerPerson.currencyString, attributes: [.font: ThemeFont.bold(size: 40)])
     text.addAttributes([.font: ThemeFont.bold(size: 24)], range: NSMakeRange(0, 1))
     amountLabelView.attributedText = text
-    totalTipView.configure(amount: result.amountPerPerson)
+    totalTipView.configure(amount: result.totalTip)
     totalBillView.configure(amount: result.totalBill)
   }
 }
