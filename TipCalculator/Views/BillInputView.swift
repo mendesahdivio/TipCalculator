@@ -54,7 +54,7 @@ class BillInputView: UIView {
         action: nil),
       doneButton
     ])
-    
+    textField.accessibilityIdentifier = ScreenIdentifiers.BillInputView.textField.rawValue
     textField.setAccessorView(view: customToolBar)
     
     return textField;

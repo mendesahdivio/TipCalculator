@@ -58,7 +58,7 @@ extension CalculatorVm {
   final func getTipAmount(bill: Double, tip: Tip) -> Double {
     switch tip {
     case .none:
-      return 0
+      return 0.0
     case .tenPercent:
       return bill * 0.1
     case .fiftyPercent:

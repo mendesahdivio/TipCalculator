@@ -9,6 +9,7 @@ import UIKit
 class AmountView: UIView {
   private let textAlignment: NSTextAlignment
   private let title: String
+  private let identifier: String
   
   private lazy var titleLabel: UILabel = {
     LabelView.buildLabel(
@@ -31,6 +32,7 @@ class AmountView: UIView {
       .font: ThemeFont.bold(size: 16)
     ], range: NSMakeRange(0, 1))
     label.attributedText = text
+    label.accessibilityIdentifier = identifier
     return label
   }()
   
@@ -45,9 +47,10 @@ class AmountView: UIView {
   }()
   
   
-  init(textAlignment: NSTextAlignment, title: String) {
+  init(textAlignment: NSTextAlignment, title: String, identifier: String) {
     self.textAlignment = textAlignment
     self.title = title
+    self.identifier = identifier
     super.init(frame: .zero)
     layout()
   }
